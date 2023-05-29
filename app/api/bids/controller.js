@@ -4,7 +4,7 @@ const addBids = async (req, res) => {
   try {
     const { procurementId, vendorId, amount, status } = req.body;
     const bidRef = await db.collection("Bids").doc();
-    const bidId = bidRef.id();
+    const bidId = bidRef.id;
     await bidRef.create({
       procurementId: procurementId,
       vendorId: vendorId,
@@ -24,6 +24,7 @@ const addBids = async (req, res) => {
   } catch (err) {
     res.status(400).send({
       msg: "Filed adding data",
+      err: err.message
     });
   }
 };
