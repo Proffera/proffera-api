@@ -103,7 +103,7 @@ Retrieve a Bid's information.
 - **Endpoint:** `/bids/{bid_id}`
 - **Method:** `GET`
 - **Path Parameters:**
-    - `{bid_id}` - The ID of the user to retrieve.
+    - `{bid_id}` - The ID of the bids to retrieve.
 - **Success Response:**
     - **Code:** 200 OK
     - **Response Body:**
