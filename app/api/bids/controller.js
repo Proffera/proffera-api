@@ -100,9 +100,26 @@ const updateBids = async (req, res) => {
   }
 }
 
+const deleteBids = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const bidDoc = db.collection("Bids").doc(id);
+    await bidDoc.delete();
+    res.status(200).send({
+      msg: "Success Deleted"
+    })
+  } catch (err) {
+    res.status(400).send({
+      msg: "Failed to Delete",
+      err: err,
+    });
+  }
+}
+
 module.exports = {
   addBids,
   getBids,
   findBids,
-  updateBids
+  updateBids,
+  deleteBids
 };
