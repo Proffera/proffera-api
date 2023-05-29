@@ -71,9 +71,38 @@ const findBids = async (req, res) => {
     });
   }
 }
+const updateBids = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const { procurementId, vendorId, amount, status } = req.body;
+    const bidDoc = db.collection("Bids").doc(id);
+    await bidDoc.update({
+      procurementId: procurementId,
+      vendorId: vendorId,
+      amount: amount,
+      status: status,
+    })
+    res.status(200).send({
+      msg: "Data Updated",
+      data: {
+        id: id,
+        procurementId: procurementId,
+        vendorId: vendorId,
+        amount: amount,
+        status: status,
+      }
+    })
+  } catch (err) {
+    res.status(400).send({
+      msg: "Failed to Update",
+      err: err,
+    });
+  }
+}
 
 module.exports = {
   addBids,
   getBids,
-  findBids
+  findBids,
+  updateBids
 };
