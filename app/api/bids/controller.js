@@ -29,4 +29,32 @@ const addBids = async (req, res) => {
   }
 };
 
-module.exports = addBids;
+const getBids = async (req, res) => {
+  try {
+    const bids = db.collection("Bids");
+    const response = [];
+    const data = await bids.get();
+    const docs = data.docs;
+    docs.forEach((doc) => {
+      const selectedItemBids = {
+        id: doc.id,
+        data: doc.data()
+      }
+      response.push(selectedItemBids)
+    })
+    res.status(200).send({
+      msg: "Success fetching data",
+      data: response,
+    });
+  } catch (err) {
+    res.status(400).send({
+      msg: "Failed to fetch data",
+      err: err,
+    });
+  }
+}
+
+module.exports = {
+  addBids,
+  getBids
+};
