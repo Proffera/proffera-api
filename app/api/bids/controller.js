@@ -54,7 +54,26 @@ const getBids = async (req, res) => {
   }
 }
 
+const findBids = async (req, res) => {
+  try {
+    const bidId = req.params.id;
+    const bidDoc = db.collection("Bids").doc(bidId);
+    let bid = await bidDoc.get();
+    let response = bid.data();
+    res.status(200).send({
+      msg: "Data Found",
+      data: response
+    })
+  } catch (err) {
+    res.status(400).send({
+      msg: "Failed to fetch data",
+      err: err,
+    });
+  }
+}
+
 module.exports = {
   addBids,
-  getBids
+  getBids,
+  findBids
 };
