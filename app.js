@@ -3,7 +3,7 @@ var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
 const routerBids = require("./app/api/bids/router");
-
+const routerProcurement = require("./app/api/procurement/procurement.router");
 var app = express();
 
 app.use(logger("dev"));
@@ -17,6 +17,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api", routerProcurement);
 app.use("/api", routerBids);
 
 module.exports = app;
