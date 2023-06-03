@@ -1,120 +1,76 @@
-const db = require("../../db");
+const { addBidsService, getBidsServices, findBidsServices, updateBidsServices, deleteBidsServices } = require("../../services/api/bids");
 
-const addBids = async (req, res) => {
+const addBids = async (req, res, next) => {
   try {
-    const { procurementId, vendorId, amount, status } = req.body;
-    const bidRef = await db.collection("Bids").doc();
-    const bidId = bidRef.id;
-    await bidRef.create({
-      procurementId: procurementId,
-      vendorId: vendorId,
-      amount: amount,
-      status: status,
-    });
-    return res.status(201).send({
-      msg: "Success",
-      data: {
-        id: bidId,
-        procurementId: procurementId,
-        vendorId: vendorId,
-        amount: amount,
-        status: status,
-      },
-    });
+    const data = await addBidsService(req);
+    res.status(201).send({
+      message: "Succesful create a new Bidding",
+      data
+    })
   } catch (err) {
-    res.status(400).send({
-      msg: "Filed adding data",
-      err: err.message
-    });
+    res.status(400).send({ msg: "Filed adding data", err: err.message });
+    next(err)
   }
 };
 
-const getBids = async (req, res) => {
+const getBids = async (req, res, next) => {
   try {
-    const bids = db.collection("Bids");
-    const response = [];
-    const data = await bids.get();
-    const docs = data.docs;
-    docs.forEach((doc) => {
-      const selectedItemBids = {
-        id: doc.id,
-        data: doc.data()
-      }
-      response.push(selectedItemBids)
-    })
+    const data = await getBidsServices();
+    if (data === "Not Found") {
+      const error = res.status(200).send({
+        message: "Empty Bids"
+      })
+      return error
+    }
     res.status(200).send({
-      msg: "Success fetching data",
-      data: response,
+      message: "Success fetching data",
+      data
     });
   } catch (err) {
-    res.status(400).send({
-      msg: "Failed to fetch data",
-      err: err,
-    });
+    res.status(400).send({ msg: "Failed to fetch data", err });
+    next(err);
   }
-}
+};
 
-const findBids = async (req, res) => {
+const findBids = async (req, res, next) => {
   try {
-    const bidId = req.params.id;
-    const bidDoc = db.collection("Bids").doc(bidId);
-    let bid = await bidDoc.get();
-    let response = bid.data();
-    res.status(200).send({
-      msg: "Data Found",
-      data: response
-    })
+    const data = await findBidsServices(req)
+    res.status(200).send({ msg: "Data Found", data });
   } catch (err) {
-    res.status(400).send({
-      msg: "Failed to fetch data",
-      err: err,
-    });
+    res.status(400).send({ msg: "Failed to fetch data", err });
+    next(err)
   }
-}
-const updateBids = async (req, res) => {
-  try {
-    const id = req.params.id;
-    const { procurementId, vendorId, amount, status } = req.body;
-    const bidDoc = db.collection("Bids").doc(id);
-    await bidDoc.update({
-      procurementId: procurementId,
-      vendorId: vendorId,
-      amount: amount,
-      status: status,
-    })
-    res.status(200).send({
-      msg: "Data Updated",
-      data: {
-        id: id,
-        procurementId: procurementId,
-        vendorId: vendorId,
-        amount: amount,
-        status: status,
-      }
-    })
-  } catch (err) {
-    res.status(400).send({
-      msg: "Failed to Update",
-      err: err,
-    });
-  }
-}
+};
 
-const deleteBids = async (req, res) => {
+const updateBids = async (req, res, next) => {
   try {
-    const id = req.params.id;
-    const bidDoc = db.collection("Bids").doc(id);
-    await bidDoc.delete();
-    res.status(200).send({
-      msg: "Success Deleted"
-    })
+    const data = await updateBidsServices(req);
+    res.status(200).send({ msg: "Data Updated", data });
   } catch (err) {
-    res.status(400).send({
-      msg: "Failed to Delete",
-      err: err,
-    });
+    res.status(400).send({ msg: "Failed to Update", err: err.message });
+    next(err)
   }
-}
+};
+
+const deleteBids = async (req, res, next) => {
+  try {
+    const data = await deleteBidsServices(req)
+    if (data === "Not Found") {
+      const error = res.status(404).send({
+        message: "Delete Bids and Proposals Faile",
+        error: "ID NOT FOUND"
+      })
+      return error
+    }
+    res.status(200).send({
+      msg: "Success Deleted Bids and Proposals",
+      data
+    });
+  } catch (err) {
+    res.status(400).send({ msg: "Failed to Delete", err });
+    next(err);
+  }
+};
 
 module.exports = {
   addBids,
