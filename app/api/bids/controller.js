@@ -2,14 +2,15 @@ const db = require("../../db");
 
 const addBids = async (req, res) => {
   try {
-    const { procurementId, vendorId, amount, status } = req.body;
+    const { procurementId, vendorId, contractAmount, proposalFiles, biddingStatus } = req.body;
     const bidRef = await db.collection("Bids").doc();
     const bidId = bidRef.id;
     await bidRef.create({
       procurementId: procurementId,
       vendorId: vendorId,
-      amount: amount,
-      status: status,
+      contractAmount: contractAmount,
+      proposalFiles: proposalFiles,
+      biddingStatus: biddingStatus,
     });
     return res.status(201).send({
       msg: "Success",
@@ -17,8 +18,9 @@ const addBids = async (req, res) => {
         id: bidId,
         procurementId: procurementId,
         vendorId: vendorId,
-        amount: amount,
-        status: status,
+        contractAmount: contractAmount,
+        proposalFiles: proposalFiles,
+        biddingStatus: biddingStatus,
       },
     });
   } catch (err) {
@@ -74,13 +76,14 @@ const findBids = async (req, res) => {
 const updateBids = async (req, res) => {
   try {
     const id = req.params.id;
-    const { procurementId, vendorId, amount, status } = req.body;
+    const { procurementId, vendorId, contractAmount, proposalFiles, biddingStatus } = req.body;
     const bidDoc = db.collection("Bids").doc(id);
     await bidDoc.update({
       procurementId: procurementId,
       vendorId: vendorId,
-      amount: amount,
-      status: status,
+      contractAmount: contractAmount,
+      proposalFiles: proposalFiles,
+      biddingStatus: biddingStatus,
     })
     res.status(200).send({
       msg: "Data Updated",
@@ -88,8 +91,9 @@ const updateBids = async (req, res) => {
         id: id,
         procurementId: procurementId,
         vendorId: vendorId,
-        amount: amount,
-        status: status,
+        contractAmount: contractAmount,
+        proposalFiles: proposalFiles,
+        biddingStatus: biddingStatus,
       }
     })
   } catch (err) {

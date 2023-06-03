@@ -2,25 +2,25 @@ const db = require("../../db");
 
 exports.addProcurement = async (req, res) => {
   try {
-    const { title, description, status, deadline, vendorIds } = req.body;
+    const { governmentId, bidId, name, description, workingAddress } = req.body;
     const Procurement = await db.collection("Procurement").doc();
     const procurementId = Procurement.id;
     await Procurement.create({
-      title: title,
-      description: description,
-      status: status,
-      deadline: deadline,
-      vendorIds: vendorIds
+        governmentId: governmentId,
+        bidId: bidId,
+        name: name,
+        description: description,
+        workingAddress: workingAddress
     });
     return res.status(201).send({
       msg: "Success",
       data: {
         id: procurementId,
-        title: title,
+        governmentId: governmentId,
+        bidId: bidId,
+        name: name,
         description: description,
-        status: status,
-        deadline: deadline,
-        vendorIds: vendorIds
+        workingAddress: workingAddress
       },
     });
   } catch (err) {
@@ -77,24 +77,24 @@ exports.findProcurement = async (req, res) => {
 exports.updateProcurement = async (req, res) => {
     try {
       const id = req.params.id;
-      const { title, description, status, deadline, vendorIds } = req.body;
+      const { governmentId, bidId, name, description, workingAddress } = req.body;
       const Procurement = db.collection("Procurement").doc(id);
       await Procurement.update({
-        title: title,
+        governmentId: governmentId,
+        bidId: bidId,
+        name: name,
         description: description,
-        status: status,
-        deadline: deadline,
-        vendorIds: vendorIds
+        workingAddress: workingAddress
       })
       res.status(200).send({
         msg: "Data have been successfully Updated",
         data: {
             id: id,
-            title: title,
+            governmentId: governmentId,
+            bidId: bidId,
+            name: name,
             description: description,
-            status: status,
-            deadline: deadline,
-            vendorIds: vendorIds
+            workingAddress: workingAddress
         }
       })
     } catch (err) {
