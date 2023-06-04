@@ -1,118 +1,99 @@
-const db = require("../../db");
+const { addGovernmentService, 
+        getGovernmentServices, 
+        findGovernmentServices, 
+        updateGovernmentServices, 
+        deleteGovernmentServices 
+    } = require("../../services/api/government");
 
-exports.addGovernment = async (req, res) => {
+exports.addGovernment = async (req, res, next) => {
   try {
-    const { procurementId, institute, address, profilePictures } = req.body;
-    const Government = await db.collection("Government").doc();
-    const governmentId = Government.id;
-    await Government.create({
-        procurementId: procurementId,
-        institute: institute,
-        address: address,
-        profilePictures: profilePictures,
-    });
-    return res.status(201).send({
-      msg: "Success",
-      data: {
-        id: governmentId,
-        procurementId: procurementId,
-        institute: institute,
-        address: address,
-        profilePictures: profilePictures,
-      },
-    });
+    const data = await addGovernmentService(req);
+    res.status(201).send({
+      message: "Succesful create a new Government",
+      data
+    })
   } catch (err) {
-    res.status(400).send({
-      msg: "Filed To Create a Government Data",
-      err: err.message
+    res.status(400).send({ 
+        msg: "Filed adding data", 
+        err: err.message 
     });
+    next(err)
   }
 };
 
-exports.getAllGovernment = async (req, res) => {
-    try {
-      const Government = db.collection("Government");
-      const response = [];
-      const data = await Government.get();
-      const docs = data.docs;
-      docs.forEach((doc) => {
-        const governmentData = {
-          id: doc.id,
-          data: doc.data()
-        }
-        response.push(governmentData)
+exports.getAllGovernment = async (req, res, next) => {
+  try {
+    const data = await getGovernmentServices();
+    if (data === "Not Found") {
+      const error = res.status(200).send({
+        message: "Government Data Not Found"
       })
-      res.status(200).send({
-        msg: "Success fetching data",
-        data: response,
-      });
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to fetch data",
-        err: err,
-      });
+      return error
     }
-}
+    res.status(200).send({
+      message: "Success fetching data",
+      data
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to fetch data", 
+        err 
+    });
+    next(err);
+  }
+};
 
-exports.findGovernment = async (req, res) => {
-    try {
-      const governmentId = req.params.id;
-      const governmentDoc = db.collection("Government").doc(governmentId);
-      let governmentData = await governmentDoc.get();
-      let response = governmentData.data();
-      res.status(200).send({
-        msg: "Data Found",
-        data: response
-      })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to fetch data",
-        err: err,
-      });
-    }
-}
+exports.findGovernment = async (req, res, next) => {
+  try {
+    const data = await findGovernmentServices(req)
+    res.status(200).send({
+         msg: "Data Found", 
+         data 
+        });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to fetch data", 
+        err 
+    });
+    next(err)
+  }
+};
 
-exports.updateGovernment = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { procurementId, institute, address, profilePictures } = req.body;
-      const Government = db.collection("Government").doc(id);
-      await Government.update({
-        procurementId: procurementId,
-        institute: institute,
-        address: address,
-        profilePictures: profilePictures,
-      })
-      res.status(200).send({
-        msg: "Data have been successfully Updated",
-        data: {
-            id: id,
-            procurementId: procurementId,
-            institute: institute,
-            address: address,
-            profilePictures: profilePictures,
-        }
-      })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to Update",
-        err: err,
-      });
-    }
-}
+exports.updateGovernment = async (req, res, next) => {
+  try {
+    const data = await updateGovernmentServices(req);
+    res.status(200).send({ 
+        msg: "Data Updated", 
+        data 
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to Update", 
+        err: err.message 
+    });
+    next(err)
+  }
+};
 
-exports.deleteGovernment = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const Government = db.collection("Government").doc(id);
-      await Government.delete();
-      res.status(200).send({
-        msg: "Government Data have been Successfully Deleted"
+exports.deleteGovernment = async (req, res, next) => {
+  try {
+    const data = await deleteGovernmentServices(req)
+    if (data === "Not Found") {
+      const error = res.status(404).send({
+        message: "Delete Data Failed",
+        error: "ID NOT FOUND"
       })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to Delete Government Data",
-        err: err,
-      });
+      return error
     }
-}
+    res.status(200).send({
+      msg: "Success Deleted Data",
+      data
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to Delete", 
+        err 
+    });
+    next(err);
+  }
+};

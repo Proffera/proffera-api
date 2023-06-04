@@ -1,126 +1,99 @@
-const db = require("../../db");
+const { addVendorService, 
+        getVendorServices, 
+        findVendorServices, 
+        updateVendorServices, 
+        deleteVendorServices 
+    } = require("../../services/api/vendor");
 
-exports.addVendor = async (req, res) => {
+exports.addVendor = async (req, res, next) => {
   try {
-    const { bidId, institute, address, npwp, profilePictures, filePortfolio } = req.body;
-    const Vendor = await db.collection("Vendor").doc();
-    const vendorId = Vendor.id;
-    await Vendor.create({
-        bidId: bidId,
-        institute: institute,
-        address: address,
-        npwp: npwp,
-        profilePictures: profilePictures,
-        filePortfolio: filePortfolio
-    });
-    return res.status(201).send({
-      msg: "Success",
-      data: {
-        id: vendorId,
-        bidId: bidId,
-        institute: institute,
-        address: address,
-        npwp: npwp,
-        profilePictures: profilePictures,
-        filePortfolio: filePortfolio
-      },
-    });
+    const data = await addVendorService(req);
+    res.status(201).send({
+      message: "Succesful create a new Vendor",
+      data
+    })
   } catch (err) {
-    res.status(400).send({
-      msg: "Filed To Create a Vendor Data",
-      err: err.message
+    res.status(400).send({ 
+        msg: "Filed adding data", 
+        err: err.message 
     });
+    next(err)
   }
 };
 
-exports.getAllVendor = async (req, res) => {
-    try {
-      const Vendor = db.collection("Vendor");
-      const response = [];
-      const data = await Vendor.get();
-      const docs = data.docs;
-      docs.forEach((doc) => {
-        const vendorData = {
-          id: doc.id,
-          data: doc.data()
-        }
-        response.push(vendorData)
+exports.getAllVendor = async (req, res, next) => {
+  try {
+    const data = await getVendorServices();
+    if (data === "Not Found") {
+      const error = res.status(200).send({
+        message: "Vendor Data Not Found"
       })
-      res.status(200).send({
-        msg: "Success fetching data",
-        data: response,
-      });
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to fetch data",
-        err: err,
-      });
+      return error
     }
-}
+    res.status(200).send({
+      message: "Success fetching data",
+      data
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to fetch data", 
+        err 
+    });
+    next(err);
+  }
+};
 
-exports.findVendor = async (req, res) => {
-    try {
-      const vendorId = req.params.id;
-      const vendorDoc = db.collection("Vendor").doc(vendorId);
-      let vendorData = await vendorDoc.get();
-      let response = vendorData.data();
-      res.status(200).send({
-        msg: "Data Found",
-        data: response
-      })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to fetch data",
-        err: err,
-      });
-    }
-}
+exports.findVendor = async (req, res, next) => {
+  try {
+    const data = await findVendorServices(req)
+    res.status(200).send({
+         msg: "Data Found", 
+         data 
+        });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to fetch data", 
+        err 
+    });
+    next(err)
+  }
+};
 
-exports.updateVendor = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const { bidId, institute, address, npwp, profilePictures, filePortfolio } = req.body;
-      const Vendor = db.collection("Vendor").doc(id);
-      await Vendor.update({
-        bidId: bidId,
-        institute: institute,
-        address: address,
-        npwp: npwp,
-        profilePictures: profilePictures,
-        filePortfolio: filePortfolio
-      })
-      res.status(200).send({
-        msg: "Data have been successfully Updated",
-        data: {
-            id: id,
-            bidId: bidId,
-            institute: institute,
-            address: address,
-            npwp: npwp,
-            profilePictures: profilePictures,
-            filePortfolio: filePortfolio
-        }
-      })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to Update",
-        err: err,
-      });
-    }
-}
+exports.updateVendor = async (req, res, next) => {
+  try {
+    const data = await updateVendorServices(req);
+    res.status(200).send({ 
+        msg: "Data Updated", 
+        data 
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to Update", 
+        err: err.message 
+    });
+    next(err)
+  }
+};
 
-exports.deleteVendor = async (req, res) => {
-    try {
-      const id = req.params.id;
-      const Vendor = db.collection("Vendor").doc(id);
-      await Vendor.delete();
-      res.status(200).send({
-        msg: "Vendor Data have been Successfully Deleted"
+exports.deleteVendor = async (req, res, next) => {
+  try {
+    const data = await deleteVendorServices(req)
+    if (data === "Not Found") {
+      const error = res.status(404).send({
+        message: "Delete Data Failed",
+        error: "ID NOT FOUND"
       })
-    } catch (err) {
-      res.status(400).send({
-        msg: "Failed to Delete Vendor Data",
-        err: err,
-      });
+      return error
     }
-}
+    res.status(200).send({
+      msg: "Success Deleted Data",
+      data
+    });
+  } catch (err) {
+    res.status(400).send({ 
+        msg: "Failed to Delete", 
+        err 
+    });
+    next(err);
+  }
+};
