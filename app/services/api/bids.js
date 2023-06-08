@@ -1,12 +1,6 @@
 const db = require("../../db");
-const config = require("../../config");
-const { initializeApp } = require("firebase/app")
-const { getStorage, getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
-
-// initializeApp Firebase Client
-initializeApp(config.firebaseConfig);
-
-const storage = getStorage();
+const { storage } = require("../../config");
+const { getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
 
 // Add Bids Services
 const addBidsService = async (req) => {

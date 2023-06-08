@@ -1,12 +1,6 @@
 const db = require("../../db");
-const config = require("../../config");
-const { initializeApp } = require("firebase/app")
-const { getStorage, getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
-
-// initializeApp Firebase Client
-initializeApp(config.firebaseConfig);
-
-const storage = getStorage();
+const { storage } = require("../../config");
+const { getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
 
 // Add Vendor 
 exports.addVendorService = async (req) => {
@@ -28,7 +22,7 @@ exports.addVendorService = async (req) => {
     ProfilePicture: downloadUrl,
     filePortfolio: downloadUrlPortfolio
   });
-  return [{vendorId, procurementId, institute, address, downloadUrl, downloadUrlPortfolio }];
+  return [{ vendorId, procurementId, institute, address, downloadUrl, downloadUrlPortfolio }];
 }
 // Get all Vendor 
 exports.getVendorServices = async (req) => {
@@ -62,19 +56,19 @@ exports.updateVendorServices = async (req) => {
   const vendorDoc = db.collection("Vendor").doc(id);
   const vendor = await vendorDoc.get();
   const response = vendor.data();
-  await vendorDoc.update({ 
-    bidId: response.bidId, 
-    ProfilePicture: response.ProfilePicture, 
-    filePortfolio: response.filePortfolio, 
-    institute, 
-    address 
-    })
+  await vendorDoc.update({
+    bidId: response.bidId,
+    ProfilePicture: response.ProfilePicture,
+    filePortfolio: response.filePortfolio,
+    institute,
+    address
+  })
   return [{
-    bidId: response.bidId, 
-    ProfilePicture: response.ProfilePicture, 
-    filePortfolio: response.filePortfolio, 
-    institute, 
-    address 
+    bidId: response.bidId,
+    ProfilePicture: response.ProfilePicture,
+    filePortfolio: response.filePortfolio,
+    institute,
+    address
   }]
 }
 // Delete Vendor 

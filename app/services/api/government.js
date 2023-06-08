@@ -1,12 +1,6 @@
 const db = require("../../db");
-const config = require("../../config");
-const { initializeApp } = require("firebase/app")
-const { getStorage, getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
-
-// initializeApp Firebase Client
-initializeApp(config.firebaseConfig);
-
-const storage = getStorage();
+const { storage } = require("../../config");
+const { getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
 
 // Add Government 
 exports.addGovernmentService = async (req) => {
@@ -24,7 +18,7 @@ exports.addGovernmentService = async (req) => {
     address,
     ProfilePicture: downloadUrl,
   });
-  return [{governmentId, procurementId, institute, address, downloadUrl }];
+  return [{ governmentId, procurementId, institute, address, downloadUrl }];
 }
 // Get all Government 
 exports.getGovernmentServices = async (req) => {
@@ -58,12 +52,12 @@ exports.updateGovernmentServices = async (req) => {
   const GovernmentDoc = db.collection("Government").doc(id);
   const government = await GovernmentDoc.get();
   const response = government.data();
-  await GovernmentDoc.update({ 
-    procurementId: response.procurementId, 
-    ProfilePicture: response.ProfilePicture, 
-    institute, 
-    address 
-})
+  await GovernmentDoc.update({
+    procurementId: response.procurementId,
+    ProfilePicture: response.ProfilePicture,
+    institute,
+    address
+  })
   return [{
     procurementId: response.procurementId,
     ProfilePicture: response.ProfilePicture,
