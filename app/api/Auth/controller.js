@@ -4,8 +4,14 @@ const signIn = require("../../services/auth/signin")
 const signupUser = async (req, res) => {
   try {
     const result = await signUp(req)
-    const Check = result === "USER ALREADY SIGNUP"
-    if (Check) {
+    const UserAlreadySignUp = result === "USER ALREADY SIGNUP"
+    const PasswordWeak = result === "PASSWORD TO WEAK"
+    if (UserAlreadySignUp) {
+      res.status(400).send({
+        msg: "User sign up failed",
+        errorCatch: result
+      })
+    } else if (PasswordWeak) {
       res.status(400).send({
         msg: "User sign up failed",
         errorCatch: result
@@ -17,6 +23,7 @@ const signupUser = async (req, res) => {
       })
     }
   } catch (error) {
+    console.log(error)
     res.status(500).send({
       message: "INTERNAL SERVER ERROR"
     })

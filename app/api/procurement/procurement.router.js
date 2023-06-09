@@ -1,12 +1,12 @@
 const express = require("express");
 const controller = require("./procurement.controller");
-    
+const { isGovernment } = require("../../middlewares/authentication")
 const router = express.Router();
 
-router.post("/procurement", controller.addProcurement);
+router.post("/procurement", isGovernment, controller.addProcurement);
 router.get("/procurement", controller.getAllProcurement);
 router.get("/procurement/:id", controller.findProcurement);
-router.put("/procurement/:id", controller.updateProcurement);
-router.delete("/procurement/:id", controller.deleteProcurement);
+router.put("/procurement/:id", isGovernment, controller.updateProcurement);
+router.delete("/procurement/:id", isGovernment, controller.deleteProcurement);
 
 module.exports = router;
