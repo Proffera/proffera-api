@@ -19,10 +19,11 @@ exports.addVendorService = async (req) => {
     bidId,
     institute,
     address,
+    npwp,
     ProfilePicture: downloadUrl,
     filePortfolio: downloadUrlPortfolio
   });
-  return [{ vendorId, procurementId, institute, address, downloadUrl, downloadUrlPortfolio }];
+  return [{ vendorId, procurementId, institute, address, npwp, downloadUrl, downloadUrlPortfolio }];
 }
 // Get all Vendor 
 exports.getVendorServices = async (req) => {
