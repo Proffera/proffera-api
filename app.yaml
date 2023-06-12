@@ -1,0 +1,10 @@
+runtime: nodejs20
+service: default
+env_variables:
+  APIKEY: AIzaSyDiobs1Caxeo6Mw6-7EvCst97L4pPtjMLA
+  AUTHDOMAIN: proffera-development-cf-bed51.firebaseapp.com
+  PROJECTID: proffera-development-cf-bed51
+  STORAGEBUCKET: proffera-development-cf-bed51.appspot.com
+  MESSAGINGSENDERID: 854137746967
+  APPID: 1:854137746967:web:afba7cfd6fde13bdc48e52
+  MEASUREMENTID: G-77406FL857%
