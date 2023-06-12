@@ -61,7 +61,7 @@ exports.findGovernmentServices = async (req) => {
 // Update Government
 exports.updateGovernmentServices = async (req) => {
   const id = req.params.id;
-  const { institute, address, procurementId } = req.body;
+  const { institute, address } = req.body;
   const GovernmentDoc = db.collection("Government").doc(id);
   const government = await GovernmentDoc.get();
   const response = government.data();
@@ -70,19 +70,9 @@ exports.updateGovernmentServices = async (req) => {
     address: address,
     institute: institute,
     email: response.email,
-    procurementId: firestore.FieldValue.arrayUnion(procurementId),
     updatedAt: new Date().toISOString(),
   });
-  return [
-    {
-      createdAt: response.createdAt,
-      address: address,
-      institute: institute,
-      email: response.email,
-      procurementId: procurementId,
-      updatedAt: new Date().toISOString(),
-    },
-  ];
+  return response;
 };
 // Delete Government
 exports.deleteGovernmentServices = async (req) => {

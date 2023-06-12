@@ -81,7 +81,7 @@ exports.updateVendorServices = async (req) => {
   const id = req.params.id;
   // const user = auth.currentUser;
   // const uid = user.uid;
-  const { institute, address, npwp, bidId } = req.body;
+  const { institute, address, npwp } = req.body;
   const vendorDoc = db.collection("Vendor").doc(id);
   const vendor = await vendorDoc.get();
   const response = vendor.data();
@@ -92,7 +92,6 @@ exports.updateVendorServices = async (req) => {
     npwp: npwp,
     institute: institute,
     email: response.email,
-    bidId: bidId,
     updatedAt: new Date().toISOString(),
   });
   return [
