@@ -72,7 +72,15 @@ exports.updateGovernmentServices = async (req) => {
     email: response.email,
     updatedAt: new Date().toISOString(),
   });
-  return response;
+  return [
+    {
+      createdAt: response.createdAt,
+      address: address,
+      institute: institute,
+      email: response.email,
+      updatedAt: new Date().toISOString(),
+    },
+  ];
 };
 // Delete Government
 exports.deleteGovernmentServices = async (req) => {
