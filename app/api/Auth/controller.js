@@ -41,6 +41,10 @@ const signInUser = async (req, res) => {
       res.status(400).send({
         message: "Cant Login Check Your Credentials"
       })
+    } else if (data === "TOKEN WAS EXPIRED") {
+      res.status(400).send({
+        message: "Token Was Expired Please Login Again"
+      })
     } else {
       res.status(200).header('Authorization', `Bearer ${data}`).send({
         token: data

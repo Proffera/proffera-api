@@ -62,3 +62,8 @@ typings/
 
 # Firebase Key
 key.json
+keyLoc.json
+
+# Google Deployment App Engine
+.gcloudignore
+app.yaml

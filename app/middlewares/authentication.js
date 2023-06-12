@@ -19,7 +19,16 @@ const authMiddlewares = (req, res, next) => {
     res.set("uid", data)
     next();
   }).catch((error) => {
-    console.log(error)
+    if (error.code === "auth/id-token-expired") {
+      res.status(400).send({
+        error: "TOKEN EXPIRED",
+        message: "PLEASE LOGIN AGAIN !"
+      })
+    } else {
+      res.status(500).send({
+        error: "INTERNAL SERVER ERROR"
+      })
+    }
   })
 }
 
@@ -49,9 +58,17 @@ const isGovernment = (req, res, next) => {
         })
       }
     })
-    // next();
   }).catch((error) => {
-    console.log(error)
+    if (error.code === "auth/id-token-expired") {
+      res.status(400).send({
+        error: "TOKEN EXPIRED",
+        message: "PLEASE LOGIN AGAIN !"
+      })
+    } else {
+      res.status(500).send({
+        error: "INTERNAL SERVER ERROR"
+      })
+    }
   })
 }
 
@@ -81,9 +98,17 @@ const isVendor = (req, res, next) => {
         })
       }
     })
-    // next();
   }).catch((error) => {
-    console.log(error)
+    if (error.code === "auth/id-token-expired") {
+      res.status(400).send({
+        error: "TOKEN EXPIRED",
+        message: "PLEASE LOGIN AGAIN !"
+      })
+    } else {
+      res.status(500).send({
+        error: "INTERNAL SERVER ERROR"
+      })
+    }
   })
 }
 module.exports = { authMiddlewares, isGovernment, isVendor };

@@ -47,7 +47,6 @@ const signUp = async (req) => {
       token = userCred.user.getIdToken();
       const venSchema = {
         email: req.body.email,
-        password: req.body.password,
         institute: req.body.institute,
         address: req.body.address,
         npwp: req.body.npwp,
