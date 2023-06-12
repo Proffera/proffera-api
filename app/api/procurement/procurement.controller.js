@@ -86,11 +86,11 @@ exports.findProcurement = async (req, res) => {
 exports.updateProcurement = async (req, res) => {
   try {
     const id = req.params.id;
-    const { governmentId, bidId, name, description, workingAddress } = req.body;
+    const uid = auth.currentUser.uid
+    const { name, description, workingAddress } = req.body;
     const Procurement = db.collection("Procurement").doc(id);
     await Procurement.update({
-      governmentId: governmentId,
-      bidId: bidId,
+      governmentId: uid,
       name: name,
       description: description,
       workingAddress: workingAddress,
@@ -99,8 +99,7 @@ exports.updateProcurement = async (req, res) => {
       msg: "Data have been successfully Updated",
       data: {
         id: id,
-        governmentId: governmentId,
-        bidId: bidId,
+        governmentId: uid,
         name: name,
         description: description,
         workingAddress: workingAddress,
