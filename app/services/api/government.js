@@ -1,14 +1,27 @@
 const db = require("../../db");
 const { storage } = require("../../config");
-const { getDownloadURL, uploadBytesResumable, ref, deleteObject } = require("firebase/storage");
+const {
+  getDownloadURL,
+  uploadBytesResumable,
+  ref,
+  deleteObject,
+} = require("firebase/storage");
+const { firestore } = require("firebase-admin");
 
-// Add Government 
+// Add Government
 exports.addGovernmentService = async (req) => {
   const { procurementId, institute, address } = req.body;
   const date = Date.now();
-  const storageRef = ref(storage, `profilePictures/${req.file.originalname} - ${date}`);
+  const storageRef = ref(
+    storage,
+    `profilePictures/${req.file.originalname} - ${date}`
+  );
   const metadata = { contentType: req.file.mimetype };
-  const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, metadata);
+  const snapshot = await uploadBytesResumable(
+    storageRef,
+    req.file.buffer,
+    metadata
+  );
   const downloadUrl = await getDownloadURL(snapshot.ref);
   const Government = db.collection("Government").doc();
   const governmentId = Government.id;
@@ -19,8 +32,8 @@ exports.addGovernmentService = async (req) => {
     ProfilePicture: downloadUrl,
   });
   return [{ governmentId, procurementId, institute, address, downloadUrl }];
-}
-// Get all Government 
+};
+// Get all Government
 exports.getGovernmentServices = async (req) => {
   const Government = db.collection("Government");
   const response = [];
@@ -28,24 +41,24 @@ exports.getGovernmentServices = async (req) => {
   data.docs.forEach((doc) => {
     response.push({
       id: doc.id,
-      data: doc.data()
+      data: doc.data(),
     });
   });
   if (response.length === 0) {
-    return "Not Found"
+    return "Not Found";
   } else {
     return response;
   }
-}
-// Find Government By Id 
+};
+// Find Government By Id
 exports.findGovernmentServices = async (req) => {
   const governmentId = req.params.id;
   const governmentDoc = db.collection("Government").doc(governmentId);
   const government = await governmentDoc.get();
   const response = government.data();
-  return response
-}
-// Update Government 
+  return response;
+};
+// Update Government
 exports.updateGovernmentServices = async (req) => {
   const id = req.params.id;
   const { institute, address, procurementId } = req.body;
@@ -57,31 +70,33 @@ exports.updateGovernmentServices = async (req) => {
     address: address,
     institute: institute,
     email: response.email,
-    procurementId: procurementId,
+    procurementId: firestore.FieldValue.arrayUnion(procurementId),
     updatedAt: new Date().toISOString(),
-  })
-  return [{
-    createdAt: response.createdAt,
-    address: address,
-    institute: institute,
-    email: response.email,
-    procurementId: procurementId,
-    updatedAt: new Date().toISOString(),
-  }]
-}
-// Delete Government 
+  });
+  return [
+    {
+      createdAt: response.createdAt,
+      address: address,
+      institute: institute,
+      email: response.email,
+      procurementId: procurementId,
+      updatedAt: new Date().toISOString(),
+    },
+  ];
+};
+// Delete Government
 exports.deleteGovernmentServices = async (req) => {
   const id = req.params.id;
   const governmentDoc = db.collection("Government").doc(id);
   const government = await governmentDoc.get();
   const data = government.data();
   if (!data) {
-    return "Not Found"
+    return "Not Found";
   } else {
     const fileUrl = data.ProfilePicture;
     const storageRefProposal = ref(storage, fileUrl);
     await deleteObject(storageRefProposal);
     await governmentDoc.delete();
-    return data
+    return data;
   }
-}
+};
