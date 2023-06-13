@@ -4,7 +4,7 @@ const { auth } = require("../../config");
 
 exports.addProcurement = async (req, res) => {
   try {
-    const { name, description, workingAddress } = req.body;
+    const { namaPaket, description, workingAddress, kategori, pagu, namaPemenang } = req.body;
     const governmentId = auth.currentUser.uid;
     const Procurement = db.collection("Procurement").doc();
     const procurementId = Procurement.id;
@@ -18,18 +18,24 @@ exports.addProcurement = async (req, res) => {
     // Create a New Procurement
     await Procurement.create({
       governmentId: governmentId,
-      name: name,
+      namaPaket: namaPaket,
       description: description,
       workingAddress: workingAddress,
+      kategori: kategori,
+      pagu: pagu,
+      namaPemenang: namaPemenang 
     });
     return res.status(201).send({
       msg: "Success",
       data: {
         id: procurementId,
         governmentId: governmentId,
-        name: name,
+        namaPaket: namaPaket,
         description: description,
         workingAddress: workingAddress,
+        kategori: kategori,
+        pagu: pagu,
+        namaPemenang: namaPemenang 
       },
     });
   } catch (err) {
@@ -87,13 +93,16 @@ exports.updateProcurement = async (req, res) => {
   try {
     const id = req.params.id;
     const uid = auth.currentUser.uid
-    const { name, description, workingAddress } = req.body;
+    const { namaPaket, description, workingAddress, kategori, pagu, namaPemenang } = req.body;
     const Procurement = db.collection("Procurement").doc(id);
     await Procurement.update({
       governmentId: uid,
-      name: name,
+      namaPaket: namaPaket,
       description: description,
       workingAddress: workingAddress,
+      kategori: kategori,
+      pagu: pagu,
+      namaPemenang: namaPemenang
     });
     res.status(200).send({
       msg: "Data have been successfully Updated",
