@@ -10,7 +10,8 @@ const { firestore } = require("firebase-admin");
 
 // Add Bids Services
 const addBidsService = async (req) => {
-  const { procurementId, contractAmount, biddingStatus } = req.body;
+  const { procurementId, HPS } = req.body;
+  const biddingStatus = "Request Review";
   const vendorId = auth.currentUser.uid;
   const dateTime = Date.now();
   const storageRef = ref(
@@ -42,20 +43,20 @@ const addBidsService = async (req) => {
   });
   // Create a New Bidding
   await bidRef.create({
-    procurementId,
     vendorId,
-    contractAmount,
-    fileProposal: downloadUrl,
+    procurementId,
     biddingStatus,
+    HPS,
+    fileProposal: downloadUrl,
   });
 
   return [
     {
       bidId,
-      procurementId,
       vendorId,
-      contractAmount,
+      procurementId,
       biddingStatus,
+      HPS,
       downloadUrl,
     },
   ];
@@ -88,7 +89,7 @@ const findBidsServices = async (req) => {
 // Update Bids Services
 const updateBidsServices = async (req) => {
   const id = req.params.id;
-  const { contractAmount, biddingStatus } = req.body;
+  const { biddingStatus, KontrakDeal } = req.body;
   const bidDoc = db.collection("Bids").doc(id);
   const bid = await bidDoc.get();
   const response = bid.data();
@@ -96,7 +97,8 @@ const updateBidsServices = async (req) => {
     procurementId: response.procurementId,
     vendorId: response.vendorId,
     fileProposal: response.fileProposal,
-    contractAmount,
+    HPS: response.HPS,
+    KontrakDeal,
     biddingStatus,
   });
   return [
@@ -104,7 +106,8 @@ const updateBidsServices = async (req) => {
       procurementId: response.procurementId,
       vendorId: response.vendorId,
       fileProposal: response.fileProposal,
-      contractAmount,
+      HPS: response.HPS,
+      KontrakDeal,
       biddingStatus,
     },
   ];
