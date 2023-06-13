@@ -89,7 +89,6 @@ exports.deleteGovernmentServices = async (req) => {
   if (!data) {
     return "Not Found";
   } else if (fileUrl) {
-    console.log("ADA GAMBAR");
     await deleteObject(storageRefPhotoProfile);
     await governmentDoc.delete();
     await deleteUser(user).then(() => {

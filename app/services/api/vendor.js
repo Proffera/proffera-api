@@ -6,51 +6,9 @@ const {
   ref,
   deleteObject,
 } = require("firebase/storage");
-// Add Vendor
-exports.addVendorService = async (req) => {
-  const { bidId, institute, address, npwp } = req.body;
-  const date = Date.now();
-  const storageRef = ref(
-    storage,
-    `profilePictures/${req.file.originalname} - ${date}`
-  );
-  const storageRefFilePortfolio = ref(
-    storage,
-    `filePortfolio/${req.file.originalname} - ${date}`
-  );
-  const metadata = { contentType: req.file.mimetype };
-  const snapshot = await uploadBytesResumable(
-    storageRef,
-    req.file.buffer,
-    metadata
-  );
-  const snapshotPortfolio = await uploadBytesResumable(
-    storageRefFilePortfolio,
-    req.file.buffer,
-    metadata
-  );
-  const downloadUrl = await getDownloadURL(snapshot.ref);
-  const downloadUrlPortfolio = await getDownloadURL(snapshotPortfolio.ref);
-  const Vendor = db.collection("Vendor").doc();
-  const vendorId = Vendor.id;
-  await Vendor.create({
-    bidId,
-    institute,
-    address,
-    ProfilePicture: downloadUrl,
-    filePortfolio: downloadUrlPortfolio,
-  });
-  return [
-    {
-      vendorId,
-      procurementId,
-      institute,
-      address,
-      downloadUrl,
-      downloadUrlPortfolio,
-    },
-  ];
-};
+const { updateProfile, deleteUser, signOut } = require("firebase/auth");
+const { firestore } = require("firebase-admin");
+
 // Get all Vendor
 exports.getVendorServices = async (req) => {
   const Vendor = db.collection("Vendor");
@@ -78,20 +36,53 @@ exports.findVendorServices = async (req) => {
 };
 // Update Vendor
 exports.updateVendorServices = async (req) => {
-  const id = req.params.id;
-  // const user = auth.currentUser;
-  // const uid = user.uid;
+  const id = auth.currentUser.uid;
+  // Request Body
   const { institute, address, npwp } = req.body;
+  // Request File
+  // Profile Images
+  const storageRefProfileImage = ref(
+    storage,
+    `profileImage/${req.files.profileImage[0].originalname} - ${Date.now()}`
+  );
+  // Portofolio Vendor
+  const storageRefFilePortfolio = ref(
+    storage,
+    `filePortfolio/${req.files.filePortfolio[0].originalname} - ${Date.now()}`
+  );
+  // Metadata
+  const metadataProfile = { contentType: req.files.profileImage[0].mimetype };
+  const metadataFilePortofolio = {
+    contentType: req.files.filePortfolio[0].mimetype,
+  };
+  // Snapshoot
+  const snapshotProfileImage = await uploadBytesResumable(
+    storageRefProfileImage,
+    req.files.profileImage[0].buffer,
+    metadataProfile
+  );
+  const snapshotPortfolio = await uploadBytesResumable(
+    storageRefFilePortfolio,
+    req.files.filePortfolio[0].buffer,
+    metadataFilePortofolio
+  );
+  // Get URL Image or Portfolio
+  const downloadUrl = await getDownloadURL(snapshotProfileImage.ref);
+  const downloadUrlPortfolio = await getDownloadURL(snapshotPortfolio.ref);
   const vendorDoc = db.collection("Vendor").doc(id);
+  await updateProfile(auth.currentUser, {
+    photoURL: downloadUrl,
+  });
   const vendor = await vendorDoc.get();
   const response = vendor.data();
-  console.log(response);
   await vendorDoc.update({
     createdAt: response.createdAt,
     address: address,
     npwp: npwp,
     institute: institute,
     email: response.email,
+    photoURL: auth.currentUser.photoURL,
+    portofolio: firestore.FieldValue.arrayUnion(downloadUrlPortfolio),
     updatedAt: new Date().toISOString(),
   });
   return [
@@ -101,27 +92,39 @@ exports.updateVendorServices = async (req) => {
       npwp: npwp,
       institute: institute,
       email: response.email,
-      bidId: bidId,
+      photoURL: auth.currentUser.photoURL,
+      portofolio: firestore.FieldValue.arrayUnion(downloadUrlPortfolio),
       updatedAt: new Date().toISOString(),
     },
   ];
 };
 // Delete Vendor
 exports.deleteVendorServices = async (req) => {
-  const id = req.params.id;
+  const id = auth.currentUser.uid;
+  const user = auth.currentUser;
   const vendorDoc = db.collection("Vendor").doc(id);
   const Vendor = await vendorDoc.get();
   const data = Vendor.data();
+  const fileUrl = data.photoURL;
+  const fileUrlPortfolio = data.portofolio;
+  const storageRefProfileImage = ref(storage, fileUrl);
+  const storageRefFilePortfolio = ref(storage, fileUrlPortfolio);
   if (!data) {
     return "Not Found";
-  } else {
-    const fileUrl = data.ProfilePicture;
-    const fileUrlPortfolio = data.filePortfolio;
-    const storageRefProposal = ref(storage, fileUrl);
-    const storageRefProposalPortfolio = ref(storage, fileUrlPortfolio);
-    await deleteObject(storageRefProposal);
-    await deleteObject(storageRefProposalPortfolio);
+  } else if (fileUrl) {
+    await deleteObject(storageRefProfileImage);
+    await deleteObject(storageRefFilePortfolio);
     await vendorDoc.delete();
-    return data;
+    await deleteUser(user).then(() => {
+      signOut(auth);
+      return "User Deleted";
+    });
+  } else {
+    await deleteObject(storageRefFilePortfolio);
+    await vendorDoc.delete();
+    await deleteUser(user).then(() => {
+      signOut(auth);
+      return "User Deleted";
+    });
   }
 };

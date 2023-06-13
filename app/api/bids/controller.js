@@ -1,15 +1,21 @@
-const { addBidsService, getBidsServices, findBidsServices, updateBidsServices, deleteBidsServices } = require("../../services/api/bids");
+const {
+  addBidsService,
+  getBidsServices,
+  findBidsServices,
+  updateBidsServices,
+  deleteBidsServices,
+} = require("../../services/api/bids");
 
 const addBids = async (req, res, next) => {
   try {
     const data = await addBidsService(req);
     res.status(201).send({
       message: "Succesful create a new Bidding",
-      data
-    })
+      data,
+    });
   } catch (err) {
     res.status(400).send({ msg: "Filed adding data", err: err.message });
-    next(err)
+    next(err);
   }
 };
 
@@ -18,13 +24,13 @@ const getBids = async (req, res, next) => {
     const data = await getBidsServices();
     if (data === "Not Found") {
       const error = res.status(200).send({
-        message: "Empty Bids"
-      })
-      return error
+        message: "Empty Bids",
+      });
+      return error;
     }
     res.status(200).send({
       message: "Success fetching data",
-      data
+      data,
     });
   } catch (err) {
     res.status(400).send({ msg: "Failed to fetch data", err });
@@ -34,11 +40,11 @@ const getBids = async (req, res, next) => {
 
 const findBids = async (req, res, next) => {
   try {
-    const data = await findBidsServices(req)
+    const data = await findBidsServices(req);
     res.status(200).send({ msg: "Data Found", data });
   } catch (err) {
     res.status(400).send({ msg: "Failed to fetch data", err });
-    next(err)
+    next(err);
   }
 };
 
@@ -48,26 +54,6 @@ const updateBids = async (req, res, next) => {
     res.status(200).send({ msg: "Data Updated", data });
   } catch (err) {
     res.status(400).send({ msg: "Failed to Update", err: err.message });
-    next(err)
-  }
-};
-
-const deleteBids = async (req, res, next) => {
-  try {
-    const data = await deleteBidsServices(req)
-    if (data === "Not Found") {
-      const error = res.status(404).send({
-        message: "Delete Bids and Proposals Faile",
-        error: "ID NOT FOUND"
-      })
-      return error
-    }
-    res.status(200).send({
-      msg: "Success Deleted Bids and Proposals",
-      data
-    });
-  } catch (err) {
-    res.status(400).send({ msg: "Failed to Delete", err });
     next(err);
   }
 };
@@ -77,5 +63,4 @@ module.exports = {
   getBids,
   findBids,
   updateBids,
-  deleteBids
 };
