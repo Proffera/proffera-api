@@ -1,5 +1,6 @@
 runtime: nodejs20
 service: default
+# ENV Variable e di ubah sesuai ENV Productions
 env_variables:
   APIKEY: AIzaSyDiobs1Caxeo6Mw6-7EvCst97L4pPtjMLA
   AUTHDOMAIN: proffera-development-cf-bed51.firebaseapp.com

@@ -63,3 +63,6 @@ typings/
 # Firebase Key
 key.json
 keyLoc.json
+
+# Deploy App Engine
+app.yaml
