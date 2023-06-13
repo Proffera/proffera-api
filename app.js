@@ -2,6 +2,7 @@ var express = require("express");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
 
+const routerAuth = require("./app/api/Auth/router")
 const routerBids = require("./app/api/bids/router");
 const routerProcurement = require("./app/api/procurement/procurement.router");
 const routerVendor = require("./app/api/vendor/vendor.router");
@@ -19,6 +20,7 @@ app.get("/", (req, res) => {
   });
 });
 
+app.use("/api", routerAuth);
 app.use("/api", routerProcurement);
 app.use("/api", routerBids);
 app.use("/api", routerVendor);
