@@ -9,7 +9,9 @@ const signUp = async (req) => {
     const newUsers = {
       email: req.body.email,
       password: req.body.password,
-      institute: req.body.institute,
+      lkpd: req.body.lkpd,
+      lpse: req.body.lpse,
+      satker: req.body.satker,
       address: req.body.address,
     };
     return createUserWithEmailAndPassword(
@@ -22,7 +24,9 @@ const signUp = async (req) => {
         token = userCred.user.getIdToken();
         const govSchema = {
           email: newUsers.email,
-          institute: newUsers.institute,
+          lkpd: newUsers.lkpd,
+          lpse: newUsers.lpse,
+          satker: newUsers.satker,
           address: newUsers.address,
           createdAt: new Date().toISOString(),
         };
@@ -79,3 +83,5 @@ const signUp = async (req) => {
 };
 
 module.exports = signUp;
+
+// SignUp Add Profile Picture
