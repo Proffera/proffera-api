@@ -62,6 +62,7 @@ exports.findGovernment = async (req, res, next) => {
 exports.updateGovernment = async (req, res, next) => {
   try {
     const data = await updateGovernmentServices(req);
+    console.log("Coba")
     res.status(200).send({ 
         msg: "Data Updated", 
         data 
