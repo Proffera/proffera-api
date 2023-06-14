@@ -1,0 +1,12 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '-t', 'gcr.io/proffera-389815/proffera-api', '.']
+
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['push', 'gcr.io/proffera-389815/proffera-api']
+
+- name: 'gcr.io/cloud-builders/gcloud'
+  args: ['run', 'deploy', 'proffera-api', '--image', 'gcr.io/proffera-389815/proffera-api', '--allow-unauthenticated', '--region', 'asia-southeast2']
+
+options:
+  logging: CLOUD_LOGGING_ONLY
